@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 
 public class ApplicationManagement {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InputMismatchException {
 
         ArrayList<Applications> applications = new ArrayList<Applications>();
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("applications.ser"))) {
@@ -25,8 +25,21 @@ public class ApplicationManagement {
             System.out.println("4. View Applications");
             System.out.println("5. Delete Application");
             System.out.println("6. Exit");
-            choice = scanner.nextInt();
-            scanner.nextLine(); //to clear out buffer
+
+            boolean validChoice = false;
+            choice = -1; // default or invalid
+
+while (!validChoice) {
+    try {
+        System.out.print("Enter your choice: ");
+        choice = scanner.nextInt();
+        scanner.nextLine(); // clear newline from buffer
+        validChoice = true;
+    } catch (InputMismatchException e) {
+        System.out.println("Invalid input. Please enter a number between 1 and 6.");
+        scanner.nextLine(); // clear invalid input
+    }
+}
             switch (choice) {
                 case 1:
                     System.out.println("Enter application date: ");
@@ -60,6 +73,7 @@ public class ApplicationManagement {
                         Applications app = applications.get(i);
                         System.out.println("[" + i + "] " + app.getCompany() + " - " + app.getApplicationDate());
                     }
+                    System.out.println(" ");
 
                     System.out.println("Enter the number of the application to edit: ");
                     int editIndex = scanner.nextInt();
@@ -157,6 +171,11 @@ public class ApplicationManagement {
                         System.out.println("Error saving applications: " + e.getMessage());
                     }
                     System.out.println("Exiting program.");
+                    break;
+
+                default:
+                    System.out.println("Invalid option. Please enter a number between 1 and 6.");
+                    System.out.println(" ");
                     break;
             }
         } while (choice != 6);
