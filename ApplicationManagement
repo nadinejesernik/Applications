@@ -158,7 +158,6 @@ while (!validChoice) {
                         System.out.println("Invalid index.");
                         break;
                     }
-                    Applications toDelete = applications.get(deleteIndex);
                     applications.remove(deleteIndex);
                     break;
 
