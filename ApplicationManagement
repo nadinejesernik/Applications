@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 
 public class ApplicationManagement {
-    public static void main(String[] args) throws IOException, InputMismatchException {
+    public static void main(String[] args) throws InputMismatchException {
 
         ArrayList<Applications> applications = new ArrayList<Applications>();
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("applications.ser"))) {
