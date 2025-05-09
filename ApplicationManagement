@@ -1,0 +1,167 @@
+import java.io.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+
+public class ApplicationManagement {
+    public static void main(String[] args) throws IOException {
+
+        ArrayList<Applications> applications = new ArrayList<Applications>();
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("applications.ser"))) {
+            applications = (ArrayList<Applications>) ois.readObject();
+            System.out.println("Applications loaded from file.");
+        } catch (Exception e) {
+            System.out.println("No previous applications found. Starting fresh.");
+        }
+        Scanner scanner = new Scanner(System.in);
+        int choice;
+
+        do {
+            System.out.println("What would you like to do?");
+            System.out.println("1. Add Application");
+            System.out.println("2. Edit Application");
+            System.out.println("3. Search Application");
+            System.out.println("4. View Applications");
+            System.out.println("5. Delete Application");
+            System.out.println("6. Exit");
+            choice = scanner.nextInt();
+            scanner.nextLine(); //to clear out buffer
+            switch (choice) {
+                case 1:
+                    System.out.println("Enter application date: ");
+                    String applicationDate = scanner.nextLine();
+                    System.out.println("Enter company: ");
+                    String company = scanner.nextLine();
+                    System.out.println("Enter status: ");
+                    String status = scanner.nextLine();
+                    System.out.println("Enter asked again: ");
+                    String askedAgain = scanner.nextLine();
+                    System.out.println("Enter contact person: ");
+                    String contactPerson = scanner.nextLine();
+                    System.out.println("Enter interview date: ");
+                    String interviewDate = scanner.nextLine();
+                    System.out.println("Enter comments: ");
+                    String comments = scanner.nextLine();
+
+                    Applications internship = new Applications(applicationDate, company, status, askedAgain, contactPerson, interviewDate, comments);
+
+                    applications.add(internship);
+                    break;
+
+                case 2:
+                    if (applications.isEmpty()) {
+                        System.out.println("No applications to edit.");
+                        break;
+                    }
+
+                    // Show applications with index
+                    for (int i = 0; i < applications.size(); i++) {
+                        Applications app = applications.get(i);
+                        System.out.println("[" + i + "] " + app.getCompany() + " - " + app.getApplicationDate());
+                    }
+
+                    System.out.println("Enter the number of the application to edit: ");
+                    int editIndex = scanner.nextInt();
+                    scanner.nextLine(); // clear out buffer
+
+                    if (editIndex < 0 || editIndex >= applications.size()) {
+                        System.out.println("Invalid index.");
+                        break;
+                    }
+
+                    Applications toEdit = applications.get(editIndex);
+
+                    System.out.println("Editing application for: " + toEdit.getCompany());
+
+                    System.out.println("Enter new application date (current: " + toEdit.getApplicationDate() + "): ");
+                    String newDate = scanner.nextLine();
+                    if (!newDate.isEmpty()) toEdit.setApplicationDate(newDate);
+
+                    System.out.println("Enter new company (current: " + toEdit.getCompany() + "): ");
+                    String newCompany = scanner.nextLine();
+                    if (!newCompany.isEmpty()) toEdit.setCompany(newCompany);
+
+                    System.out.println("Enter new status (current: " + toEdit.getStatus() + "): ");
+                    String newStatus = scanner.nextLine();
+                    if (!newStatus.isEmpty()) toEdit.setStatus(newStatus);
+
+                    System.out.println("Enter new asked again (current: " + toEdit.getAskedAgain() + "): ");
+                    String newAskedAgain = scanner.nextLine();
+                    if (!newAskedAgain.isEmpty()) toEdit.setAskedAgain(newAskedAgain);
+
+                    System.out.println("Enter new contact person (current: " + toEdit.getContactPerson() + "): ");
+                    String newContact = scanner.nextLine();
+                    if (!newContact.isEmpty()) toEdit.setContactPerson(newContact);
+
+                    System.out.println("Enter new interview date (current: " + toEdit.getInterviewDate() + "): ");
+                    String newInterviewDate = scanner.nextLine();
+                    if (!newInterviewDate.isEmpty()) toEdit.setInterviewDate(newInterviewDate);
+
+                    System.out.println("Enter new comments (current: " + toEdit.getComments() + "): ");
+                    String newComments = scanner.nextLine();
+                    if (!newComments.isEmpty()) toEdit.setComments(newComments);
+
+                    System.out.println("Application updated.");
+                    break;
+
+                case 3:
+                    System.out.println("Enter Company Name:");
+                    String toShow = scanner.nextLine();
+                    boolean exists = false;
+
+                    for (Applications app : applications) {
+                        if (app.getCompany().equalsIgnoreCase(toShow)) {
+                            System.out.println("Company Name: " + app.getCompany() + "\nApplication Date: " + app.getApplicationDate() + "\nStatus: " + app.getStatus() + "\nAsked Again: " + app.getAskedAgain() + "\nContact Person: " + app.getContactPerson() + "\nInterview Date: " + app.getInterviewDate() + "\nComments: " + app.getComments());
+                            System.out.println(" ");
+                            exists = true;
+                        }
+                    }
+                    if (!exists) {
+                        System.out.println("No application found.");
+                        System.out.println(" ");
+                    }
+
+                    break;
+
+                case 4:
+                    for (int i = 0; i < applications.size(); i++) {
+                        Applications app = applications.get(i);
+                        System.out.println("[" + i + "] " + app.getCompany() + " - " + app.getApplicationDate() + " - " + app.getStatus());
+                    }
+                    System.out.println(" ");
+                    break;
+
+                case 5:
+                    for (int i = 0; i < applications.size(); i++) {
+                        Applications app = applications.get(i);
+                        System.out.println("[" + i + "] " + app.getCompany() + " - " + app.getApplicationDate());
+                    }
+                    System.out.println("Enter the number of the application to delete: ");
+                    int deleteIndex = scanner.nextInt();
+                    scanner.nextLine();
+                    if (deleteIndex < 0 || deleteIndex >= applications.size()) {
+                        System.out.println("Invalid index.");
+                        break;
+                    }
+                    Applications toDelete = applications.get(deleteIndex);
+                    applications.remove(deleteIndex);
+                    break;
+
+
+                case 6:
+                    try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("applications.ser"))) {
+                        oos.writeObject(applications);
+                        System.out.println("Applications saved to file.");
+                    } catch (IOException e) {
+                        System.out.println("Error saving applications: " + e.getMessage());
+                    }
+                    System.out.println("Exiting program.");
+                    break;
+            }
+        } while (choice != 6);
+
+
+    }
+
+}
